@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>invisible-recaptcha test</title>
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../invisible-recaptcha.html">
+  </head>
+  <body>
+    <test-fixture id="basic">
+      <template>
+        <invisible-recaptcha></invisible-recaptcha>
+      </template>
+    </test-fixture>
+
+    <script>
+      suite('invisible-recaptcha', function() {
+        test('instantiating the element works', function() {
+          var element = fixture('basic');
+          assert.equal(element.is, 'invisible-recaptcha');
+        });
+      });
+    </script>
+  </body>
+</html>

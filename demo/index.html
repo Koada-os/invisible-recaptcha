@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>invisible-recaptcha demo</title>
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../invisible-recaptcha.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+
+    </style>
+</head>
+
+<body>
+    <div class="vertical-section-container centered">
+        <h3>invisible-recaptcha demo</h3>
+        <demo-snippet>
+            <template>
+          <invisible-recaptcha id="recaptcha" recaptcha-key="6LfgYxgUAAAAAK3aQfv_AvbvRRhhuAmkqYARq3oZ"></invisible-recaptcha>
+        </template>
+        <button onclick="verify()">Am I a robot?</button>
+        <div id="cake" style="font-size:large;margin-top:10px;" hidden>Well done! you're probably not a 🤖!</div>
+        <div id="cake2" style="font-size: xx-small;margin-top:2px;" hidden>(But I'm not sure, because there is no server-side verification for this demo...)</div>
+        </demo-snippet>
+    </div>
+    <script>
+        document.addEventListener('WebComponentsReady', function() {
+            var recaptcha = document.getElementById('recaptcha');
+        });
+        document.addEventListener('verification-finished', function(event) {
+            var ajax = document.getElementById('cake').removeAttribute('hidden');
+            var ajax = document.getElementById('cake2').removeAttribute('hidden');
+        });
+
+        function verify() {
+            recaptcha.verify();
+        }
+    </script>
+</body>
+
+</html>

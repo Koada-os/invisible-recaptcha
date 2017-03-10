@@ -1,0 +1,130 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<!--
+A Polymer Invisible Recaptcha web-component to detect 🤖 (Polymer 1.x)
+
+`<invisible-recaptcha>` is an web-component implementation of the Invisible Recaptcha by Google.
+
+    <invisible-recaptcha recaptcha-key=""></invisible-recaptcha>
+
+### How to detect 🤖 :
+
+1. You need to get an API Key here: http://www.google.com/recaptcha/admin (select invisible Recaptcha)
+2. Place the element where you want
+3. When you want to make the verification, just call the verify function.
+4. Wait the end of the verification. `verification-finished` will fire.
+5. Verify the token with your backend. see https://developers.google.com/recaptcha/docs/verify for more informations.
+
+
+
+
+
+@demo demo/index.html
+-->
+
+
+<dom-module id="invisible-recaptcha">
+    <template>
+    <script src="https://www.google.com/recaptcha/api.js?onload=recaptchaLoaded" async defer></script>
+    <style>
+         :host {
+            display: block;
+        }
+    </style>
+    <div
+        hidden$={{hideBadge}}
+        class="g-recaptcha"
+        data-sitekey$="{{recaptchaKey}}"
+        data-callback="handleResponse"
+        data-size="invisible"
+        data-badge$="{{badgePosition}}"
+        data-type$="{{recaptchaType}}"
+        data-tabindex$="{{tabindex}}">
+    </div>
+  </template>
+</dom-module>
+<script>
+    function handleResponse(token) {
+        document.querySelector('invisible-recaptcha')._handleResponse(token);
+    }
+
+    function recaptchaLoaded() {
+        document.querySelector('invisible-recaptcha')._recaptchaLoaded();
+    }
+    Polymer({
+        is: 'invisible-recaptcha',
+        properties: {
+            /**
+             * Recaptcha key. To obtain an API key, see http://www.google.com/recaptcha/admin.
+             */
+            recaptchaKey: {
+                type: String,
+                notify: true
+            },
+            /**
+             * Last Response from the Recaptcha API. To handle the response, see https://developers.google.com/recaptcha/docs/verify
+             */
+            lastReponse: {
+                type: String,
+                notify: true
+            },
+            /**
+             * The position of the Recaptcha Badge. Can be `bottomright`, `bottomleft` or `inline`
+             */
+            badgePosition: {
+                type: String,
+                value: 'bottomright'
+            },
+            /**
+             * Set to true to hide the Recaptcha Badge
+             */
+            hideBadge: {
+                type: Boolean,
+                value: false
+            },
+            /**
+             * The default type of captcha showed to the user. Can be `image` or `audio`
+             */
+            recaptchaType: {
+                type: String,
+                value: 'image'
+            },
+            /**
+             * The tabindex of the challenge. If other elements in your page use tabindex, it should be set to make user navigation easier.
+             */
+            tabindex: {
+                type: Number,
+                value: 0
+            },
+        },
+        /**
+         * Verify if the user is a robot!
+         */
+        verify: function() {
+            console.log(12);
+            grecaptcha.execute();
+        },
+        /**
+         * Reset the recaptcha module
+         */
+        reset: function() {
+            grecaptcha.reset();
+        },
+        /**
+         * Get the token from the last verification.
+         *
+         * @return Token
+         */
+        getResponse: function() {
+            console.log(grecaptcha.getResponse());
+            return grecaptcha.getResponse();
+        },
+        _handleResponse: function(token) {
+            this.lastReponse = token;
+            this.fire('verification-finished', {'token': token});
+        },
+        _recaptchaLoaded: function() {
+            this.fire('recaptcha-loaded');
+        }
+    });
+</script>
