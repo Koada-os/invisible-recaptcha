@@ -15,6 +15,10 @@ A Polymer Invisible Recaptcha web-component for 🤖 detection (Polymer 1.x)
 4. Wait the end of the verification. `verification-finished` will fire.
 5. Verify the token with your backend. see https://developers.google.com/recaptcha/docs/verify for more informations.
 
+### How to use inside shadow-dom :
+
+1. Set the `shadow-dom` attribute.
+2. When you open the form call `render()`
 
 @demo demo/index.html
 -->
@@ -41,8 +45,9 @@ A Polymer Invisible Recaptcha web-component for 🤖 detection (Polymer 1.x)
   </template>
 </dom-module>
 <script>
+
     function handleResponse(token) {
-        document.querySelector('invisible-recaptcha')._handleResponse(token);
+        this.dispatchEvent(new Event('verificationFinished'));
     }
 
     function recaptchaLoaded() {
@@ -61,7 +66,7 @@ A Polymer Invisible Recaptcha web-component for 🤖 detection (Polymer 1.x)
             /**
              * Last Response from the Recaptcha API. To handle the response, see https://developers.google.com/recaptcha/docs/verify
              */
-            lastReponse: {
+            lastResponse: {
                 type: String,
                 notify: true
             },
@@ -80,6 +85,13 @@ A Polymer Invisible Recaptcha web-component for 🤖 detection (Polymer 1.x)
                 value: false
             },
             /**
+             * Set to true if this element will be encapsulated inside the Shadow Dom
+             */
+            shadowDom: {
+                type: Boolean,
+                value: false
+            },
+            /**
              * The default type of captcha showed to the user. Can be `image` or `audio`
              */
             recaptchaType: {
@@ -93,6 +105,14 @@ A Polymer Invisible Recaptcha web-component for 🤖 detection (Polymer 1.x)
                 type: Number,
                 value: 0
             },
+        },
+        ready:function () {
+          if(this.shadowDom){
+            var self = this;
+            window.addEventListener('verificationFinished', function() {
+              self._handleResponse()
+          });
+          }
         },
         /**
          * Verify if the user is a robot!
@@ -112,11 +132,26 @@ A Polymer Invisible Recaptcha web-component for 🤖 detection (Polymer 1.x)
          * @return Token
          */
         getResponse: function() {
-            return grecaptcha.getResponse();
+            return lastResponse
         },
-        _handleResponse: function(token) {
-            this.lastReponse = token;
-            this.fire('verification-finished', {'token': token});
+        /**
+         * Render the recaptcha inside the body to prevent Shadow-Dom problem.
+         */
+        render: function(container) {
+          this.shadowHelper = document.createElement('div');
+          document.querySelector('body').appendChild(this.shadowHelper);
+          if(this.hideBadge){
+            this.shadowHelper.hidden = true;
+          }
+          var renderOption = {"sitekey": this.recaptchaKey, "theme": "light", 'size': 'invisible', 'callback': 'handleResponse','badge': this.badgePosition, 'tabindex': this.tabindex, 'type': this.recaptchaType};
+          grecaptcha.render(this.shadowHelper, renderOption);
+        },
+        _handleResponse: function() {
+          var token = grecaptcha.getResponse();
+          this.lastResponse = token;
+          this.fire('verification-finished', {'token': token});
+          grecaptcha.reset();
+
         },
         _recaptchaLoaded: function() {
             this.fire('recaptcha-loaded');
