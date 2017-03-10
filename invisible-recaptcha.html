@@ -47,11 +47,11 @@ A Polymer Invisible Recaptcha web-component for 🤖 detection (Polymer 1.x)
 <script>
 
     function handleResponse(token) {
+        if(document.querySelector('invisible-recaptcha')){
+          document.querySelector('invisible-recaptcha')._handleResponse(token);
+        }else {this.dispatchEvent(new Event('verificationFinished'));}
         this.dispatchEvent(new Event('verificationFinished'));
-    }
-
-    function recaptchaLoaded() {
-        document.querySelector('invisible-recaptcha')._recaptchaLoaded();
+        console.log(12);
     }
     Polymer({
         is: 'invisible-recaptcha',
@@ -147,6 +147,7 @@ A Polymer Invisible Recaptcha web-component for 🤖 detection (Polymer 1.x)
           grecaptcha.render(this.shadowHelper, renderOption);
         },
         _handleResponse: function() {
+          console.log(13);
           var token = grecaptcha.getResponse();
           this.lastResponse = token;
           this.fire('verification-finished', {'token': token});
