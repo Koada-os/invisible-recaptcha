@@ -2,7 +2,7 @@
 
 # <invisible-recaptcha>
 
-A Polymer Invisible Recaptcha web-component to detect 🤖 (Polymer 1.x)
+A Polymer Invisible Recaptcha web-component for 🤖 detection (Polymer 1.x)
 
 `<invisible-recaptcha>` is an web-component implementation of the Invisible Recaptcha by Google.
 

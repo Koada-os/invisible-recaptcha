@@ -1,7 +1,7 @@
 <link rel="import" href="../polymer/polymer.html">
 
 <!--
-A Polymer Invisible Recaptcha web-component to detect 🤖 (Polymer 1.x)
+A Polymer Invisible Recaptcha web-component for 🤖 detection (Polymer 1.x)
 
 `<invisible-recaptcha>` is an web-component implementation of the Invisible Recaptcha by Google.
 
@@ -14,9 +14,6 @@ A Polymer Invisible Recaptcha web-component to detect 🤖 (Polymer 1.x)
 3. When you want to make the verification, just call the verify function.
 4. Wait the end of the verification. `verification-finished` will fire.
 5. Verify the token with your backend. see https://developers.google.com/recaptcha/docs/verify for more informations.
-
-
-
 
 
 @demo demo/index.html
@@ -101,7 +98,6 @@ A Polymer Invisible Recaptcha web-component to detect 🤖 (Polymer 1.x)
          * Verify if the user is a robot!
          */
         verify: function() {
-            console.log(12);
             grecaptcha.execute();
         },
         /**
@@ -116,7 +112,6 @@ A Polymer Invisible Recaptcha web-component to detect 🤖 (Polymer 1.x)
          * @return Token
          */
         getResponse: function() {
-            console.log(grecaptcha.getResponse());
             return grecaptcha.getResponse();
         },
         _handleResponse: function(token) {
