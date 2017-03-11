@@ -1,3 +1,5 @@
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
 <link rel="import" href="../polymer/polymer.html">
 
 <!--
@@ -26,7 +28,6 @@ A Polymer [Invisible Recaptcha](https://www.google.com/recaptcha) web-component 
 
 <dom-module id="invisible-recaptcha">
     <template>
-    <script src="https://www.google.com/recaptcha/api.js?onload=recaptchaLoaded" async defer></script>
     <style>
          :host {
             display: block;
@@ -45,15 +46,24 @@ A Polymer [Invisible Recaptcha](https://www.google.com/recaptcha) web-component 
   </template>
 </dom-module>
 <script>
-
     function handleResponse(token) {
-        if(document.querySelector('invisible-recaptcha')){
-          document.querySelector('invisible-recaptcha')._handleResponse(token);
-        }else {this.dispatchEvent(new Event('verificationFinished'));}
+        if (document.querySelector('invisible-recaptcha')) {
+            document.querySelector('invisible-recaptcha')._handleResponse(token);
+        } else {
+            this.dispatchEvent(new Event('verificationFinished'));
+        }
         this.dispatchEvent(new Event('verificationFinished'));
     }
     Polymer({
+
         is: 'invisible-recaptcha',
+
+        /**
+         * Fired when the recaptcha verification is done.
+         *
+         * @event verification-finished
+         */
+
         properties: {
             /**
              * Recaptcha key. To obtain an API key, see http://www.google.com/recaptcha/admin.
@@ -105,13 +115,13 @@ A Polymer [Invisible Recaptcha](https://www.google.com/recaptcha) web-component 
                 value: 0
             },
         },
-        ready:function () {
-          if(this.shadowDom){
-            var self = this;
-            window.addEventListener('verificationFinished', function() {
-              self._handleResponse()
-          });
-          }
+        ready: function() {
+            if (this.shadowDom) {
+                var self = this;
+                window.addEventListener('verificationFinished', function() {
+                    self._handleResponse()
+                });
+            }
         },
         /**
          * Verify if the user is a robot!
@@ -137,23 +147,30 @@ A Polymer [Invisible Recaptcha](https://www.google.com/recaptcha) web-component 
          * Render the recaptcha inside the body to prevent Shadow-Dom problem.
          */
         render: function(container) {
-          this.shadowHelper = document.createElement('div');
-          document.querySelector('body').appendChild(this.shadowHelper);
-          if(this.hideBadge){
-            this.shadowHelper.hidden = true;
-          }
-          var renderOption = {"sitekey": this.recaptchaKey, "theme": "light", 'size': 'invisible', 'callback': 'handleResponse','badge': this.badgePosition, 'tabindex': this.tabindex, 'type': this.recaptchaType};
-          grecaptcha.render(this.shadowHelper, renderOption);
+            this.shadowHelper = document.createElement('div');
+            document.querySelector('body').appendChild(this.shadowHelper);
+            if (this.hideBadge) {
+                this.shadowHelper.hidden = true;
+            }
+            var renderOption = {
+                "sitekey": this.recaptchaKey,
+                "theme": "light",
+                'size': 'invisible',
+                'callback': 'handleResponse',
+                'badge': this.badgePosition,
+                'tabindex': this.tabindex,
+                'type': this.recaptchaType
+            };
+            grecaptcha.render(this.shadowHelper, renderOption);
         },
         _handleResponse: function() {
-          var token = grecaptcha.getResponse();
-          this.lastResponse = token;
-          this.fire('verification-finished', {'token': token});
-          grecaptcha.reset();
+            var token = grecaptcha.getResponse();
+            this.lastResponse = token;
+            this.fire('verification-finished', {
+                'token': token
+            });
+            grecaptcha.reset();
 
         },
-        _recaptchaLoaded: function() {
-            this.fire('recaptcha-loaded');
-        }
     });
 </script>
